@@ -44,7 +44,7 @@ pipeline {
       }
     }
 
-    stage('OWASP Dependency Check (SCA)') {
+   stage('OWASP Dependency Check (SCA)') {
       steps {
         sh '''
           dependency-check \
@@ -52,10 +52,12 @@ pipeline {
             --scan app.py \
             --format HTML \
             --out dependency-check-report \
-            --noupdate
+            --noupdate \
+            --failOnCVSS 11
         '''
       }
     }
+
 
 
 
