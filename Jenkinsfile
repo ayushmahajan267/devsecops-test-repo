@@ -19,15 +19,18 @@ pipeline {
     stage('SonarQube SAST') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh '''
-            sonar-scanner \
-              -Dsonar.projectKey=devsecops-test \
-              -Dsonar.sources=. \
-              -Dsonar.host.url=http://localhost:9000
-          '''
+          script {
+            def scannerHome = tool 'SonarScanner'
+            sh """
+            ${scannerHome}/bin/sonar-scanner \
+            -Dsonar.projectKey=devsecops-test \
+            -Dsonar.sources=.
+            """
+          }
         }
       }
     }
+
 
     stage('Docker Build') {
       steps {
