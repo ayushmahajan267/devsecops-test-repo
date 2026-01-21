@@ -5,7 +5,8 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        git 'https://github.com/ayushmahajan267/devsecops-test-repo.git'
+        git branch: 'main',
+        url: 'https://github.com/ayushmahajan267/devsecops-test-repo.git'
       }
     }
 
