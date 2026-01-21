@@ -40,8 +40,14 @@ pipeline {
 
     stage('Trivy Image Scan') {
       steps {
-        sh 'trivy image devsecops-test:latest'
+        sh '''
+          trivy image \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            devsecops-test:latest
+        '''
       }
     }
+    
   }
 }
