@@ -39,37 +39,39 @@ pipeline {
       steps {
         script {
           echo "🔍 Waiting for SonarQube Quality Gate with visibility..."
-
+    
           sh '''
             TASK_ID=$(grep -o "task?id=[A-Za-z0-9_-]*" sonar.log | cut -d= -f2 | tail -1)
-
+    
             if [ -z "$TASK_ID" ]; then
-              echo "❌ Could not find SonarQube task ID in logs"
+              echo "❌ Could not find SonarQube task ID"
               exit 1
             fi
-
+    
             echo "✅ SonarQube Task ID: $TASK_ID"
-
+    
             for i in {1..20}; do
-              STATUS=$(curl -s -u $SONAR_AUTH_TOKEN: \
-                "$SONAR_HOST_URL/api/ce/task?id=$TASK_ID" | jq -r '.task.status')
-
+              RESPONSE=$(curl -s -u $SONAR_AUTH_TOKEN: \
+                "$SONAR_HOST_URL/api/ce/task?id=$TASK_ID")
+    
+              STATUS=$(echo "$RESPONSE" | grep -o '"status":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+    
               echo "Attempt $i → Sonar task status: $STATUS"
-
+    
               if [ "$STATUS" = "SUCCESS" ]; then
                 echo "✅ SonarQube background processing completed"
                 exit 0
               fi
-
+    
               if [ "$STATUS" = "FAILED" ]; then
                 echo "❌ SonarQube background task FAILED"
                 exit 1
               fi
-
+    
               sleep 30
             done
-
-            echo "⏳ SonarQube task still running after polling — infra is slow"
+    
+            echo "⏳ SonarQube task still running — SonarQube infra is slow"
             exit 1
           '''
         }
