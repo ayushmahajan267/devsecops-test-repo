@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  options {
+    timestamps()
+  }
+
   stages {
 
     stage('Checkout') {
@@ -40,7 +44,6 @@ pipeline {
       }
     }
 
-    
     stage('OWASP Dependency Check (SCA)') {
       steps {
         sh '''
@@ -53,7 +56,6 @@ pipeline {
       }
     }
 
-    
     stage('Docker Build') {
       steps {
         sh 'docker build -t devsecops-test:latest .'
@@ -75,7 +77,8 @@ pipeline {
 
   post {
     always {
-      echo "Pipeline execution completed."
+      archiveArtifacts artifacts: 'dependency-check-report/*.html', allowEmptyArchive: true
+      echo "✅ Pipeline execution completed."
     }
   }
 }
