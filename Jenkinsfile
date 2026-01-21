@@ -40,6 +40,20 @@ pipeline {
       }
     }
 
+    
+    stage('OWASP Dependency Check (SCA)') {
+      steps {
+        sh '''
+          dependency-check \
+            --scan . \
+            --format HTML \
+            --out dependency-check-report \
+            --noupdate
+        '''
+      }
+    }
+
+    
     stage('Docker Build') {
       steps {
         sh 'docker build -t devsecops-test:latest .'
