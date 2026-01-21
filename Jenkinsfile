@@ -12,10 +12,18 @@ pipeline {
     stage('SonarQube SAST') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh 'sonar-scanner -Dsonar.projectKey=devsecops-test -Dsonar.sources=.'
+          script {
+            def scannerHome = tool 'SonarScanner'
+            sh """
+            ${scannerHome}/bin/sonar-scanner \
+            -Dsonar.projectKey=devsecops-test \
+            -Dsonar.sources=.
+            """
+          }
         }
       }
     }
+
 
     stage('Docker Build') {
       steps {
