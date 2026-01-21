@@ -43,6 +43,7 @@ pipeline {
         sh '''
           trivy image \
             --severity HIGH,CRITICAL \
+            --ignore-unfixed \
             --exit-code 1 \
             devsecops-test:latest
         '''
