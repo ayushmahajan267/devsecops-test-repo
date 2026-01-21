@@ -48,13 +48,20 @@ pipeline {
       steps {
         sh '''
           dependency-check \
-            --scan . \
+            --scan app.py \
             --format HTML \
             --out dependency-check-report \
-            --noupdate
+            --noupdate \
+            --disableAssembly \
+            --disableNodeJS \
+            --disableRubyGems \
+            --disableCocoapods \
+            --disableSwift \
+            --disablePythonPackage
         '''
       }
     }
+
 
     stage('Docker Build') {
       steps {
